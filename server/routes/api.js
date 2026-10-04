@@ -2,6 +2,7 @@ const express = require('express');
 const analyzeController = require('../controllers/analyzeController');
 const authController = require('../controllers/authController');
 const historyController = require('../controllers/historyController');
+const orderController = require('../controllers/orderController');
 const auth = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -19,6 +20,10 @@ router.get('/auth/me', auth, authController.getMe);
 // History Routes
 router.post('/history', auth, historyController.saveReport);
 router.get('/history', auth, historyController.getHistory);
+
+// Order Routes
+router.post('/orders', auth, orderController.createOrder);
+router.get('/orders', auth, orderController.getOrders);
 
 // @route   GET /api/conditions
 // @desc    Get all satisfied conditions (for debugging/list)

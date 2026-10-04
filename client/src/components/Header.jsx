@@ -1,11 +1,13 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
     const { language, toggleLanguage, t } = useLanguage();
     const { user } = useAuth();
+    const { cartCount, setIsCartOpen } = useCart();
 
     return (
         <header className="fixed w-full top-0 z-50 glass transition-all duration-300">
@@ -34,6 +36,19 @@ const Header = () => {
                             Login
                         </Link>
                     )}
+
+                    <button
+                        onClick={() => setIsCartOpen(true)}
+                        className="relative flex items-center justify-center p-2 rounded-full border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all text-slate-700 hover:text-blue-600 cursor-pointer"
+                        title="View Cart"
+                    >
+                        <span className="text-lg">🛒</span>
+                        {cartCount > 0 && (
+                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm animate-pulse">
+                                {cartCount}
+                            </span>
+                        )}
+                    </button>
 
                     <button
                         onClick={toggleLanguage}

@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { useCart } from '../context/CartContext';
+import PharmacyLocator from './PharmacyLocator';
 
 const ResultCard = ({ result }) => {
     const { language, t } = useLanguage();
+    const { addToCart, setIsCartOpen } = useCart();
+    const [locatorMedicine, setLocatorMedicine] = useState(null);
     const { condition, condition_hi, severity, severity_hi, description, description_hi, advice, advice_hi, matchParams, medicines, medicines_hi, precautions, precautions_hi, home_remedies, home_remedies_hi } = result;
 
     const displayCondition = language === 'hi' && condition_hi ? condition_hi : condition;
@@ -58,18 +62,40 @@ const ResultCard = ({ result }) => {
 
                 {/* Medicines Section */}
                 {displayMedicines && displayMedicines.length > 0 && (
-                    <div className="mb-4 bg-green-50 p-4 rounded-xl border border-green-100">
-                        <h4 className="font-bold text-green-800 text-sm mb-2 flex items-center gap-2">
-                            <span className="text-lg">💊</span> Medicines <span className="text-xs font-normal opacity-75">(OTC)</span>
+                    <div className="mb-4 bg-green-50/50 p-4 sm:p-5 rounded-xl border border-green-100/50">
+                        <h4 className="font-bold text-green-800 text-sm mb-3 flex items-center gap-2">
+                            <span className="text-lg">💊</span> Suggested OTC Medicines
                         </h4>
-                        <ul className="grid gap-2">
+                        <div className="grid gap-3">
                             {displayMedicines.map((med, i) => (
-                                <li key={i} className="text-green-900 text-sm flex items-start gap-2">
-                                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-green-500 shrink-0"></span>
-                                    {med}
-                                </li>
+                                <div key={i} className="bg-white p-3.5 rounded-xl border border-green-100 flex flex-col sm:flex-row justify-between sm:items-center gap-3 hover:border-green-300 transition-colors">
+                                    <div className="flex items-start gap-2">
+                                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-green-500 shrink-0"></span>
+                                        <div>
+                                            <span className="font-bold text-slate-800 text-sm">{med}</span>
+                                            <p className="text-[11px] text-slate-400 mt-0.5">Estimated Price: ~₹45.00</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2 shrink-0">
+                                        <button
+                                            onClick={() => {
+                                                addToCart(med, "Swasthya Express Pharmacy", 45);
+                                                setIsCartOpen(true);
+                                            }}
+                                            className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1 shadow-sm cursor-pointer"
+                                        >
+                                            <span>🛒</span> Order Online
+                                        </button>
+                                        <button
+                                            onClick={() => setLocatorMedicine(med)}
+                                            className="px-3 py-1.5 border border-green-200 text-green-700 hover:bg-green-50 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                        >
+                                            <span>📍</span> Find Stores
+                                        </button>
+                                    </div>
+                                </div>
                             ))}
-                        </ul>
+                        </div>
                     </div>
                 )}
 
@@ -118,6 +144,14 @@ const ResultCard = ({ result }) => {
                     </div>
                 )}
             </div>
+
+            {locatorMedicine && (
+                <PharmacyLocator
+                    medicineName={locatorMedicine}
+                    onClose={() => setLocatorMedicine(null)}
+                    onOpenCart={() => setIsCartOpen(true)}
+                />
+            )}
         </div>
     );
 };

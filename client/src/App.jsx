@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import Header from './components/Header';
+import { useCart } from './context/CartContext';
+import CartDrawer from './components/CartDrawer';
+import OrderProgress from './components/OrderProgress';
 import { useLanguage } from './context/LanguageContext';
 import { useAuth } from './context/AuthContext';
 import Lottie from 'lottie-react';
@@ -117,14 +120,31 @@ function Home() {
 }
 
 function App() {
+  const { isCartOpen, setIsCartOpen, activeOrder, setActiveOrder } = useCart();
+
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/chatbot" element={<ChatBot />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/chatbot" element={<ChatBot />} />
+      </Routes>
+
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        onCheckoutSuccess={(order) => setActiveOrder(order)}
+      />
+
+      {activeOrder && (
+        <OrderProgress
+          order={activeOrder}
+          onClose={() => setActiveOrder(null)}
+        />
+      )}
+    </>
   );
 }
 

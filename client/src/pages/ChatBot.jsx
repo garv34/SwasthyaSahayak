@@ -8,12 +8,14 @@ import ResultCard from '../components/ResultCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import DoctorLocator from '../components/DoctorLocator';
 import { useLanguage } from '../context/LanguageContext';
+import { useCart } from '../context/CartContext';
 import Hero from '../components/Hero';
 
 const ChatBot = () => {
-    const { t } = useLanguage();
+    const { language, toggleLanguage, t } = useLanguage();
     const isOffline = useConnectivity();
     const { results, loading, error, searched, analyze, clearSearch } = useSymptomAnalysis();
+    const { cartCount, setIsCartOpen } = useCart();
     const [showLocator, setShowLocator] = useState(false);
 
     return (
@@ -37,6 +39,30 @@ const ChatBot = () => {
                                 Swasthya<span className="text-blue-600">Sahayak</span>
                             </span>
                         </Link>
+                    </div>
+
+                    {/* Right Side Options */}
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setIsCartOpen(true)}
+                            className="relative flex items-center justify-center p-2 rounded-full border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all text-slate-700 hover:text-blue-600 cursor-pointer"
+                            title="View Cart"
+                        >
+                            <span className="text-lg">🛒</span>
+                            {cartCount > 0 && (
+                                <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold shadow-sm animate-pulse">
+                                    {cartCount}
+                                </span>
+                            )}
+                        </button>
+
+                        <button
+                            onClick={toggleLanguage}
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all text-sm font-medium text-slate-700"
+                        >
+                            <span>{language === 'en' ? '🇮🇳' : '🇺🇸'}</span>
+                            <span className="hidden sm:inline">{language === 'en' ? 'HI' : 'EN'}</span>
+                        </button>
                     </div>
                 </div>
             </header>
